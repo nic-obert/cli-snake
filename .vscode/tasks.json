@@ -9,7 +9,7 @@
             "command": "/usr/bin/gcc",
             "args": [
                 "-g",
-                "main.c",
+                "snake.c",
                 "-o",
                 "snake.out",
                 "-l",
