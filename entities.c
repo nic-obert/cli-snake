@@ -4,6 +4,8 @@
 
 #include "settings.c"
 
+#define head snake->bits[0]
+
 
 // APPLE
 typedef struct {
@@ -19,14 +21,22 @@ typedef struct {
 
 // SNAKE
 typedef struct {
-    Bit bits[100];
+    Bit bits[WIN_WIDTH * WIN_HEIGHT];
     unsigned int bitCount;
 } Snake;
 
 
-void moveApple(Apple* apple) {
-    apple->x = rand() % WIN_WIDTH + START_X;
-    apple->y = rand() % WIN_HEIGHT + START_Y;
+void moveApple(Apple* apple, Snake* snake) {
+    while (1) {
+        apple->x = rand() % WIN_WIDTH + START_X;
+        apple->y = rand() % WIN_HEIGHT + START_Y;
+        for (unsigned int bit = 0; bit < snake->bitCount; bit++) {
+            if (snake->bits[bit].x != apple->x)
+                if (snake->bits[bit].y != apple->y)
+                 return;
+        }
+    }
+
 }
 
 
@@ -45,23 +55,39 @@ void updateSnake(Snake* snake, char direction) {
     {
 
     case 'w':
-        if (snake->bits[0].y > START_Y)
-            snake->bits[0].y --;
+        if (head.y > START_Y)
+            head.y --;
+        else head.y = END_Y;
         break;
 
     case 's':
-        if (snake->bits[0].y < END_Y)
-            snake->bits[0].y ++;
+        if (head.y < END_Y)
+            head.y ++;
+        else head.y = START_Y;
         break;
     case 'a':
-        if (snake->bits[0].x > START_X)
-            snake->bits[0].x --;
+        if (head.x > START_X)
+            head.x --;
+        else head.x = END_X;
         break;
     case 'd':
-        if (snake->bits[0].x < END_X)
-            snake->bits[0].x ++;
+        if (head.x < END_X)
+            head.x ++;
+        else head.x = START_X;
         break;
     }
+}
+
+
+void autoSnake(Snake* snake, Apple* apple, int* direction) {
+    if (head.x < apple->x)
+        *direction = 'd';
+    else if (head.x > apple->x)
+        *direction = 'a';
+    else if (head.y < apple->y)
+        *direction = 's';
+    else if (head.y > apple->y)
+        *direction = 'w';
 }
 
 
@@ -98,7 +124,7 @@ void refreshScreen(Snake* snake, Apple* apple) {
     // draw the snake
     for (unsigned int bit = 1; bit < snake->bitCount; bit++)
         mvprintw(snake->bits[bit].y, snake->bits[bit].x, "o");
-    mvprintw(snake->bits[0].y, snake->bits[0].x, "@");
+    mvprintw(head.y, head.x, "@");
 
     // draw the apple
     mvprintw(apple->y, apple->x, "#");
@@ -119,8 +145,8 @@ void eat(Snake* snake) {
 
 
 char didEat(Snake* snake, Apple* apple) {
-    if (snake->bits[0].x == apple->x)
-        if (snake->bits[0].y == apple->y)
+    if (head.x == apple->x)
+        if (head.y == apple->y)
             return 1;
     return 0;
 }

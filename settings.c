@@ -10,4 +10,4 @@
 #define SCORE_X (END_X + 2)
 #define SCORE_Y (WIN_HEIGHT / 2 + START_Y)
 
-#define SLEEP 100000
+#define SLEEP 10000 // 100000

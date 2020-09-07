@@ -49,7 +49,7 @@ void mainLoop() {
     snake.bitCount = 1;
 
     Apple apple;
-    moveApple(&apple);
+    moveApple(&apple, &snake);
 
     int direction;
     char playing = 1;
@@ -59,12 +59,14 @@ void mainLoop() {
         
 
         // read input and update entities
-        read(input[0], &direction, 1);
+        //read(input[0], &direction, 1);
+        autoSnake(&snake, &apple, &direction);
         updateSnake(&snake, direction);
+        
 
         if (didEat(&snake, &apple)) {
             eat(&snake);
-            moveApple(&apple);
+            moveApple(&apple, &snake);
         }
 
 
